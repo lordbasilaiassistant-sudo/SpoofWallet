@@ -12,7 +12,9 @@ const sources = {
   'diamond/DiamondStorage.sol': { content: readSource(path.join(contractsDir, 'diamond', 'DiamondStorage.sol')) },
   'diamond/Diamond.sol': { content: readSource(path.join(contractsDir, 'diamond', 'Diamond.sol')) },
   'diamond/facets/DiamondCutFacet.sol': { content: readSource(path.join(contractsDir, 'diamond', 'facets', 'DiamondCutFacet.sol')) },
-  'diamond/facets/ChallengeFacet.sol': { content: readSource(path.join(contractsDir, 'diamond', 'facets', 'ChallengeFacet.sol')) }
+  'diamond/facets/ChallengeFacet.sol': { content: readSource(path.join(contractsDir, 'diamond', 'facets', 'ChallengeFacet.sol')) },
+  'diamond/facets/ERC20Facet.sol': { content: readSource(path.join(contractsDir, 'diamond', 'facets', 'ERC20Facet.sol')) },
+  'diamond/facets/BountyFacet.sol': { content: readSource(path.join(contractsDir, 'diamond', 'facets', 'BountyFacet.sol')) }
 };
 
 const input = {
@@ -49,7 +51,7 @@ fs.mkdirSync(outDir, { recursive: true });
 
 for (const [fileName, fileContracts] of Object.entries(output.contracts)) {
   for (const [contractName, contract] of Object.entries(fileContracts)) {
-    if (contractName === 'DiamondStorage') continue;
+    if (contractName === 'DiamondStorage' || contractName === 'TokenStorage' || contractName === 'BountyStorage') continue;
     const artifact = {
       abi: contract.abi,
       bytecode: '0x' + contract.evm.bytecode.object
