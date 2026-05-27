@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Spoof Wallet — On-Chain Security Lab</title>
+  <title>Spoof Wallet — Adversarial Security Lab</title>
   <link rel="stylesheet" href="style.css">
   <script src="https://cdnjs.cloudflare.com/ajax/libs/ethers/6.13.4/ethers.umd.min.js" crossorigin="anonymous"></script>
 </head>
@@ -11,115 +11,405 @@
   <div class="container">
     <header>
       <h1>Spoof Wallet</h1>
-      <p class="subtitle">On-chain security lab — test whether address spoofing can bypass smart contract access controls</p>
+      <p class="subtitle">Adversarial AI Security Lab — attacker agents vs defender agents on live contracts</p>
     </header>
 
-    <section class="card" id="setup-section">
-      <h2>1. Setup</h2>
-      <p>Connect your wallet, then enter any contract and the address you want to impersonate.</p>
-      <button id="connect-btn" class="btn primary">Connect Wallet</button>
-      <div id="connect-status" class="status hidden"></div>
+    <nav class="tabs">
+      <button class="tab active" data-tab="dashboard">Dashboard</button>
+      <button class="tab" data-tab="findings">Research Findings</button>
+      <button class="tab" data-tab="critical">Critical Discoveries</button>
+      <button class="tab" data-tab="contracts">Affected Contracts</button>
+      <button class="tab" data-tab="challenge">Live Challenge</button>
+    </nav>
 
-      <div class="setup-grid">
-        <div class="field">
-          <label class="field-label">Your Real Wallet</label>
-          <span id="real-address" class="mono address-display">—</span>
+    <!-- TAB: Dashboard -->
+    <div class="tab-content active" id="tab-dashboard">
+      <div class="stats-grid">
+        <div class="stat-card">
+          <div class="stat-value" id="stat-rounds">2</div>
+          <div class="stat-label">Rounds Played</div>
         </div>
-        <div class="field">
-          <label class="field-label">Spoof As (impersonate this address)</label>
-          <input type="text" id="spoof-address" placeholder="0x... owner or target address" spellcheck="false">
+        <div class="stat-card accent">
+          <div class="stat-value" id="stat-findings">13</div>
+          <div class="stat-label">Total Findings</div>
         </div>
-        <div class="field">
-          <label class="field-label">Target Contract</label>
-          <input type="text" id="target-contract" value="0x0D5d767Dfad78a81237bCa60d986d68bffE9B174" spellcheck="false">
+        <div class="stat-card red">
+          <div class="stat-value" id="stat-critical">1</div>
+          <div class="stat-label">Critical</div>
+        </div>
+        <div class="stat-card orange">
+          <div class="stat-value" id="stat-high">2</div>
+          <div class="stat-label">High</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-value" id="stat-vectors">18</div>
+          <div class="stat-label">Vectors Tested</div>
+        </div>
+        <div class="stat-card green">
+          <div class="stat-value" id="stat-blocked">18</div>
+          <div class="stat-label">Blocked</div>
         </div>
       </div>
 
-      <div class="inline-row">
-        <button id="load-contract-btn" class="btn secondary">Load Contract</button>
-        <button id="use-owner-btn" class="btn small">Auto-fill: Spoof as Owner</button>
+      <div class="card">
+        <h2>Scoreboard</h2>
+        <div class="score-row">
+          <div class="team red-team">
+            <h3>Attacker Team (Vex)</h3>
+            <div class="team-stats">
+              <span class="team-stat">18 vectors attempted</span>
+              <span class="team-stat">0 on-chain exploits</span>
+              <span class="team-stat">3 LOW findings</span>
+            </div>
+          </div>
+          <div class="vs">VS</div>
+          <div class="team blue-team">
+            <h3>Defender Team (Ren)</h3>
+            <div class="team-stats">
+              <span class="team-stat">13 vulnerabilities found</span>
+              <span class="team-stat">1 CRITICAL identified</span>
+              <span class="team-stat">Solidity fixes provided</span>
+            </div>
+          </div>
+        </div>
+        <div class="verdict-bar">
+          <div class="verdict">Defender leads Round 1 — found bugs attacker missed. Round 2 in progress.</div>
+        </div>
       </div>
-    </section>
 
-    <section class="card" id="state-section">
-      <h2>2. Contract State (live from chain)</h2>
-      <div class="challenge-grid">
-        <div class="address-box">
-          <label>Owner</label>
-          <span id="contract-owner" class="mono">—</span>
+      <div class="card">
+        <h2>Live Contract State</h2>
+        <div class="challenge-grid">
+          <div class="address-box">
+            <label>Diamond Proxy</label>
+            <span class="mono">0x0D5d...B174</span>
+          </div>
+          <div class="address-box">
+            <label>Owner</label>
+            <span id="dash-owner" class="mono">loading...</span>
+          </div>
+          <div class="address-box">
+            <label>Fee Recipient</label>
+            <span id="dash-fee-recip" class="mono">loading...</span>
+          </div>
+          <div class="address-box">
+            <label>Spoof Flag</label>
+            <span id="dash-spoof" class="mono">loading...</span>
+          </div>
+          <div class="address-box">
+            <label>SPOOF Token Supply</label>
+            <span class="mono">1,000,000,000</span>
+          </div>
+          <div class="address-box">
+            <label>Bounty Pool</label>
+            <span class="mono">1,000,000 SPOOF (0.1%)</span>
+          </div>
         </div>
-        <div class="address-box">
-          <label>Fee Recipient</label>
-          <span id="contract-fee-recip" class="mono">—</span>
-        </div>
-        <div class="address-box">
-          <label>Message</label>
-          <span id="contract-message" class="mono">—</span>
-        </div>
-        <div class="address-box">
-          <label>Spoof Flag</label>
-          <span id="contract-spoof-flag" class="mono">—</span>
-        </div>
+        <button id="refresh-dash" class="btn small">Refresh</button>
       </div>
-      <button id="refresh-state-btn" class="btn small">Refresh</button>
-    </section>
 
-    <section class="card challenge" id="attack-section">
-      <h2>3. Attack — Simulation vs Reality</h2>
-      <p>Each test runs TWO calls: <code>eth_call</code> (simulation with spoofed <code>from</code>) and <code>eth_sendTransaction</code> (real tx signed by your wallet). Compare the results.</p>
+      <div class="card">
+        <h2>Round History</h2>
+        <div class="round-list">
+          <div class="round-entry">
+            <div class="round-header">
+              <span class="round-badge">Round 1</span>
+              <span class="round-date">2026-05-27</span>
+            </div>
+            <div class="round-body">
+              <p><strong>Attacker:</strong> 18 vectors tested against Diamond proxy (delegatecall, storage collision, selector clashing, CREATE2, reentrancy, ERC-2771, meta-tx). All blocked. Security boundary confirmed as cryptographic (secp256k1).</p>
+              <p><strong>Defender:</strong> 13 findings (1C, 2H, 5M, 3L, 2I). Critical: diamondCut missing extcodesize check — can permanently brick the Diamond. High: no critical selector protection, single-step ownership.</p>
+              <p><strong>Winner:</strong> <span class="badge-blue">Defender</span> — found bugs the attacker missed.</p>
+            </div>
+          </div>
+          <div class="round-entry in-progress">
+            <div class="round-header">
+              <span class="round-badge">Round 2</span>
+              <span class="round-date">In Progress</span>
+            </div>
+            <div class="round-body">
+              <p><strong>New targets:</strong> FeeVaultFacet (Clanker-style fee distribution), ERC20Facet (token inside Diamond), BountyFacet (exploit rewards). 10K SPOOF tokens claimable by fee recipient.</p>
+              <p><strong>Focus:</strong> Cross-facet reentrancy, timelock bypass, storage corruption, token approval exploits.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
 
-      <div class="attack-row">
-        <div class="attack-card">
-          <h4>setFeeRecipient()</h4>
-          <input type="text" id="attack-fee-addr" placeholder="0x... new recipient" spellcheck="false">
-          <button id="attack-fee-btn" class="btn danger" disabled>Test Attack</button>
-        </div>
-        <div class="attack-card">
-          <h4>setMessage()</h4>
-          <input type="text" id="attack-msg-text" placeholder="New message..." spellcheck="false">
-          <button id="attack-msg-btn" class="btn danger" disabled>Test Attack</button>
-        </div>
-        <div class="attack-card">
-          <h4>claimSpoof()</h4>
-          <p class="attack-desc">Flip the spoofSucceeded flag to true</p>
-          <button id="attack-claim-btn" class="btn danger" disabled>Test Attack</button>
-        </div>
-        <div class="attack-card">
-          <h4>transferOwnership()</h4>
-          <input type="text" id="attack-owner-addr" placeholder="0x... new owner" spellcheck="false">
-          <button id="attack-owner-btn" class="btn danger" disabled>Test Attack</button>
+    <!-- TAB: Research Findings -->
+    <div class="tab-content" id="tab-findings">
+      <div class="card">
+        <h2>Research Papers</h2>
+        <div class="paper-list">
+          <a class="paper" href="https://github.com/lordbasilaiassistant-sudo/SpoofWallet/blob/master/research/00-hypothesis.md" target="_blank">
+            <span class="paper-id">00</span>
+            <div>
+              <h4>Core Hypothesis</h4>
+              <p>Can browser-level wallet spoofing bypass on-chain msg.sender checks?</p>
+            </div>
+          </a>
+          <a class="paper" href="https://github.com/lordbasilaiassistant-sudo/SpoofWallet/blob/master/research/01-ethereum-transaction-signing.md" target="_blank">
+            <span class="paper-id">01</span>
+            <div>
+              <h4>Ethereum Transaction Signing</h4>
+              <p>Protocol-level analysis: ECDSA signing, from field derivation, why msg.sender = ecrecover</p>
+            </div>
+          </a>
+          <a class="paper" href="https://github.com/lordbasilaiassistant-sudo/SpoofWallet/blob/master/research/02-attack-surface-analysis.md" target="_blank">
+            <span class="paper-id">02</span>
+            <div>
+              <h4>Attack Surface Analysis</h4>
+              <p>9 attack vectors across provider injection, raw tx manipulation, and meta-transactions</p>
+            </div>
+          </a>
+          <a class="paper" href="https://github.com/lordbasilaiassistant-sudo/SpoofWallet/blob/master/research/03-diamond-attack-vectors.md" target="_blank">
+            <span class="paper-id red">03</span>
+            <div>
+              <h4>Diamond Attack Vectors (Red Team)</h4>
+              <p>18 vectors tested against live Diamond proxy. All blocked. 3 LOW findings.</p>
+            </div>
+          </a>
+          <a class="paper" href="https://github.com/lordbasilaiassistant-sudo/SpoofWallet/blob/master/research/04-diamond-defense-audit.md" target="_blank">
+            <span class="paper-id blue">04</span>
+            <div>
+              <h4>Diamond Defense Audit (Blue Team)</h4>
+              <p>13 findings: 1 CRITICAL, 2 HIGH, 5 MEDIUM. Missing extcodesize, selector bricking, ownership.</p>
+            </div>
+          </a>
+          <a class="paper" href="https://github.com/lordbasilaiassistant-sudo/SpoofWallet/blob/master/research/05-adversarial-framework.md" target="_blank">
+            <span class="paper-id">05</span>
+            <div>
+              <h4>Adversarial AI Framework</h4>
+              <p>Methodology: attacker vs defender self-play, episode tracking, training data generation</p>
+            </div>
+          </a>
+          <a class="paper" href="https://github.com/lordbasilaiassistant-sudo/SpoofWallet/blob/master/research/06-diamond-proxy-security.md" target="_blank">
+            <span class="paper-id">06</span>
+            <div>
+              <h4>Diamond Proxy Security</h4>
+              <p>EIP-2535 attack surface: delegatecall, storage slots, facet replacement, cross-facet reentrancy</p>
+            </div>
+          </a>
         </div>
       </div>
-    </section>
+    </div>
 
-    <section class="card" id="results-section">
-      <h2>4. Results Log</h2>
-      <p>Every attack attempt shows simulation vs real transaction side by side.</p>
-      <div id="results-log" class="log-box">
-        <div class="log-empty">No attacks attempted yet. Connect wallet and load contract to start.</div>
-      </div>
-      <button id="clear-results-btn" class="btn small">Clear</button>
-    </section>
-
-    <section class="card" id="lookup-section">
-      <h2>Transaction Lookup</h2>
-      <p>Find who sent a transaction. Use their address as the spoof target.</p>
-      <div class="input-group">
-        <input type="text" id="tx-hash-input" placeholder="0x... transaction hash" spellcheck="false">
-        <button id="lookup-btn" class="btn secondary">Lookup</button>
-      </div>
-      <div id="lookup-result" class="hidden">
-        <div class="address-box">
-          <label>Sender (<code>from</code>)</label>
-          <span id="tx-sender" class="mono">—</span>
+    <!-- TAB: Critical Discoveries -->
+    <div class="tab-content" id="tab-critical">
+      <div class="card critical-card">
+        <div class="critical-header">
+          <span class="severity-badge critical">CRITICAL</span>
+          <h3>F-01: diamondCut Missing extcodesize Validation</h3>
         </div>
-        <button id="use-sender-btn" class="btn small">Use as Spoof Address</button>
+        <p class="critical-desc">Neither Add nor Replace actions in diamondCut check if the facet address has deployed code. delegatecall to an EOA returns success with empty returndata — functions silently do nothing. If diamondCut itself is pointed at an EOA, <strong>the Diamond is permanently bricked</strong>.</p>
+        <div class="critical-meta">
+          <span>Discovered by: <strong>Defender (Ren)</strong></span>
+          <span>Round: <strong>1</strong></span>
+          <span>Exploitable externally: <strong>No (owner-only)</strong></span>
+        </div>
+        <div class="novel-badge">Previously documented in reference EIP-2535 but missing from many custom implementations</div>
       </div>
-      <div id="lookup-error" class="status error hidden"></div>
-    </section>
+
+      <div class="card critical-card">
+        <div class="critical-header">
+          <span class="severity-badge high">HIGH</span>
+          <h3>F-02: No Protection Against Critical Selector Removal</h3>
+        </div>
+        <p class="critical-desc">diamondCut permits removing or replacing ANY selector — including diamondCut itself, transferOwnership, and owner(). Removing diamondCut permanently bricks upgrades with no recovery path.</p>
+        <div class="critical-meta">
+          <span>Discovered by: <strong>Defender (Ren)</strong></span>
+          <span>Round: <strong>1</strong></span>
+          <span>Exploitable externally: <strong>No (owner-only)</strong></span>
+        </div>
+        <div class="novel-badge">Nick Mudge reference implementation also lacks this — it is considered owner responsibility</div>
+      </div>
+
+      <div class="card critical-card">
+        <div class="critical-header">
+          <span class="severity-badge high">HIGH</span>
+          <h3>F-03: Single-Step Ownership Transfer</h3>
+        </div>
+        <p class="critical-desc">transferOwnership immediately sets new owner with no acceptance step. pendingOwner field exists in storage but is unused dead code. Typo = irrecoverable ownership loss. No upgrades, no withdrawals, no recovery.</p>
+        <div class="critical-meta">
+          <span>Discovered by: <strong>Defender (Ren)</strong></span>
+          <span>Round: <strong>1</strong></span>
+          <span>Exploitable externally: <strong>Social engineering possible</strong></span>
+        </div>
+        <div class="novel-badge">OpenZeppelin solved this with Ownable2Step — many production contracts still use single-step</div>
+      </div>
+
+      <div class="card critical-card">
+        <div class="critical-header">
+          <span class="severity-badge medium">MEDIUM</span>
+          <h3>F-04: Operator Can Drain Entire Treasury</h3>
+        </div>
+        <p class="critical-desc">Approved operator has uncapped withdrawal authority. No per-tx limit, no daily cap, no timelock, no multi-sig. Equivalent to full owner access for treasury operations.</p>
+        <div class="critical-meta">
+          <span>Discovered by: <strong>Defender (Ren)</strong></span>
+          <span>Round: <strong>1</strong></span>
+          <span>Exploitable externally: <strong>Requires compromised operator key</strong></span>
+        </div>
+      </div>
+    </div>
+
+    <!-- TAB: Affected Contracts -->
+    <div class="tab-content" id="tab-contracts">
+      <div class="card">
+        <h2>Production Contracts Using Same Patterns</h2>
+        <p>These findings affect any Diamond proxy or upgradeable contract using the same code patterns. Below are known contracts with similar architecture.</p>
+
+        <div class="affected-list">
+          <div class="affected-entry">
+            <div class="affected-header">
+              <h4>Missing extcodesize in diamondCut (F-01)</h4>
+              <span class="severity-badge critical">CRITICAL</span>
+            </div>
+            <div class="affected-contracts">
+              <div class="contract-row">
+                <span class="contract-name">Custom Diamond implementations</span>
+                <span class="contract-note">Any Diamond that copies the pattern without Nick Mudge's enforceHasContractCode()</span>
+              </div>
+              <div class="contract-row safe">
+                <span class="contract-name">Aave V3 Diamond</span>
+                <span class="contract-note">SAFE — validates target code size</span>
+              </div>
+              <div class="contract-row safe">
+                <span class="contract-name">Nick Mudge diamond-3 reference</span>
+                <span class="contract-note">SAFE — includes enforceHasContractCode()</span>
+              </div>
+              <div class="contract-row vulnerable">
+                <span class="contract-name">Minimal Diamond tutorials / boilerplates</span>
+                <span class="contract-note">VULNERABLE — many skip this check for simplicity</span>
+              </div>
+            </div>
+          </div>
+
+          <div class="affected-entry">
+            <div class="affected-header">
+              <h4>No Critical Selector Protection (F-02)</h4>
+              <span class="severity-badge high">HIGH</span>
+            </div>
+            <div class="affected-contracts">
+              <div class="contract-row vulnerable">
+                <span class="contract-name">Nick Mudge diamond-3 reference</span>
+                <span class="contract-note">VULNERABLE — same issue, considered owner responsibility</span>
+              </div>
+              <div class="contract-row vulnerable">
+                <span class="contract-name">Most custom Diamond implementations</span>
+                <span class="contract-note">VULNERABLE — rarely implement core selector guards</span>
+              </div>
+              <div class="contract-row safe">
+                <span class="contract-name">OpenZeppelin TransparentUpgradeableProxy</span>
+                <span class="contract-note">SAFE — protects upgradeTo selector by design</span>
+              </div>
+            </div>
+          </div>
+
+          <div class="affected-entry">
+            <div class="affected-header">
+              <h4>Single-Step Ownership Transfer (F-03)</h4>
+              <span class="severity-badge high">HIGH</span>
+            </div>
+            <div class="affected-contracts">
+              <div class="contract-row">
+                <span class="contract-name">Clanker V3 Factory</span>
+                <span class="contract-note">Uses OpenZeppelin Ownable (single-step) — same risk</span>
+              </div>
+              <div class="contract-row vulnerable">
+                <span class="contract-name">Many DeFi protocols pre-2024</span>
+                <span class="contract-note">VULNERABLE — Ownable was default before Ownable2Step</span>
+              </div>
+              <div class="contract-row safe">
+                <span class="contract-name">Uniswap V4 PoolManager</span>
+                <span class="contract-note">SAFE — uses 2-step ownership</span>
+              </div>
+            </div>
+          </div>
+
+          <div class="affected-entry">
+            <div class="affected-header">
+              <h4>Fee Recipient Change Without Timelock</h4>
+              <span class="severity-badge medium">MEDIUM</span>
+            </div>
+            <div class="affected-contracts">
+              <div class="contract-row">
+                <span class="contract-name">Clanker Locker contracts</span>
+                <span class="contract-note">LP fee recipient set at deploy, changes go through locker owner</span>
+              </div>
+              <div class="contract-row vulnerable">
+                <span class="contract-name">Many token launch platforms</span>
+                <span class="contract-note">VULNERABLE — fee recipient changeable by deployer with no delay</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- TAB: Live Challenge -->
+    <div class="tab-content" id="tab-challenge">
+      <section class="card">
+        <h2>Setup</h2>
+        <p>Connect your wallet and test attacks against the live Diamond proxy. Simulation (eth_call) vs real transaction comparison.</p>
+        <button id="connect-btn" class="btn primary">Connect Wallet</button>
+        <div id="connect-status" class="status hidden"></div>
+        <div class="setup-grid">
+          <div class="field">
+            <label class="field-label">Your Real Wallet</label>
+            <span id="real-address" class="mono address-display">—</span>
+          </div>
+          <div class="field">
+            <label class="field-label">Spoof As</label>
+            <input type="text" id="spoof-address" placeholder="0x... owner or target address" spellcheck="false">
+          </div>
+          <div class="field">
+            <label class="field-label">Target Contract</label>
+            <input type="text" id="target-contract" value="0x0D5d767Dfad78a81237bCa60d986d68bffE9B174" spellcheck="false">
+          </div>
+        </div>
+        <div class="inline-row">
+          <button id="load-contract-btn" class="btn secondary">Load Contract</button>
+          <button id="use-owner-btn" class="btn small">Auto-fill: Spoof as Owner</button>
+        </div>
+      </section>
+
+      <section class="card challenge" id="attack-section">
+        <h2>Attack</h2>
+        <div class="attack-row">
+          <div class="attack-card">
+            <h4>setFeeRecipient()</h4>
+            <input type="text" id="attack-fee-addr" placeholder="0x... new recipient" spellcheck="false">
+            <button id="attack-fee-btn" class="btn danger" disabled>Test Attack</button>
+          </div>
+          <div class="attack-card">
+            <h4>setMessage()</h4>
+            <input type="text" id="attack-msg-text" placeholder="New message..." spellcheck="false">
+            <button id="attack-msg-btn" class="btn danger" disabled>Test Attack</button>
+          </div>
+          <div class="attack-card">
+            <h4>claimSpoof()</h4>
+            <p class="attack-desc">Flip spoofSucceeded to true</p>
+            <button id="attack-claim-btn" class="btn danger" disabled>Test Attack</button>
+          </div>
+          <div class="attack-card">
+            <h4>transferOwnership()</h4>
+            <input type="text" id="attack-owner-addr" placeholder="0x... new owner" spellcheck="false">
+            <button id="attack-owner-btn" class="btn danger" disabled>Test Attack</button>
+          </div>
+        </div>
+      </section>
+
+      <section class="card">
+        <h2>Results</h2>
+        <div id="results-log" class="log-box">
+          <div class="log-empty">No attacks attempted yet.</div>
+        </div>
+        <button id="clear-results-btn" class="btn small">Clear</button>
+      </section>
+    </div>
 
     <footer>
-      <p>Educational use only. No data stored. <a href="https://github.com/lordbasilaiassistant-sudo/SpoofWallet" target="_blank">Source</a></p>
+      <p>Adversarial AI Security Lab — educational use only. <a href="https://github.com/lordbasilaiassistant-sudo/SpoofWallet" target="_blank">Source</a> | Diamond: 0x0D5d...B174 on Base</p>
     </footer>
   </div>
 

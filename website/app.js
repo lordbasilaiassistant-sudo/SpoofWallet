@@ -258,11 +258,38 @@
     el.classList.remove('hidden');
   }
 
+  // --- Tab Navigation ---
+
+  document.querySelectorAll('.tab').forEach(tab => {
+    tab.addEventListener('click', () => {
+      document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+      document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
+      tab.classList.add('active');
+      document.getElementById('tab-' + tab.dataset.tab).classList.add('active');
+    });
+  });
+
+  // --- Dashboard State ---
+
+  async function loadDashboardState() {
+    try {
+      const rpc = new ethers.JsonRpcProvider(RPC_URL);
+      const contract = new ethers.Contract(DEFAULT_CONTRACT, ABI, rpc);
+      const [_owner, _feeRecip, _msg, _pub, _own, _spoof, _treasury] = await contract.getState();
+      if ($('#dash-owner')) $('#dash-owner').textContent = _owner;
+      if ($('#dash-fee-recip')) $('#dash-fee-recip').textContent = _feeRecip;
+      if ($('#dash-spoof')) {
+        $('#dash-spoof').textContent = _spoof ? 'TRUE — BROKEN!' : 'false';
+        $('#dash-spoof').style.color = _spoof ? 'var(--red)' : 'var(--green)';
+      }
+    } catch (e) {}
+  }
+
   // --- Init ---
 
   $('#connect-btn').addEventListener('click', connectWallet);
   $('#load-contract-btn').addEventListener('click', loadContractState);
-  $('#refresh-state-btn').addEventListener('click', loadContractState);
+  if ($('#refresh-dash')) $('#refresh-dash').addEventListener('click', loadDashboardState);
   $('#use-owner-btn').addEventListener('click', autoFillOwner);
   $('#attack-fee-btn').addEventListener('click', attackSetFeeRecipient);
   $('#attack-msg-btn').addEventListener('click', attackSetMessage);
@@ -278,7 +305,7 @@
     if (e.key === 'Enter') lookupTransaction();
   });
 
-  loadContractState();
+  loadDashboardState();
 
   if (window.ethereum) {
     window.ethereum.on('accountsChanged', (accounts) => {
