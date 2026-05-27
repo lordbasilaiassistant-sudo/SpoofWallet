@@ -1,0 +1,33 @@
+{
+  "scanDate": "2026-05-27T17:59:24.828Z",
+  "chain": "Base (8453)",
+  "scanner": "live-scan-deep.js",
+  "totalScanned": 6,
+  "results": [
+    {
+      "address": "0x420DD381b31aEf6683db6B902084cB0FFECe40Da",
+      "label": "Known fee-bearing contract",
+      "contractName": "PoolFactory",
+      "compiler": "v0.8.19+commit.7dd6d404",
+      "sourceSize": 21432,
+      "feeVarCount": 1,
+      "findings": [
+        {
+          "severity": "CRITICAL",
+          "type": "HIDDEN_FEE_RECIPIENT_ASSIGNMENT",
+          "setter": "setFeeManager",
+          "param": "_feeManager",
+          "body": "{\r\n        if (msg.sender != feeManager) revert NotFeeManager();\r\n        if (_feeManager == address(0)) revert ZeroAddress();\r\n        feeManager = _feeManager;\r\n        emit SetFeeManager(_feeManager);\r\n    }",
+          "detail": "Function setFeeManager() assigns address parameter \"_feeManager\" to a fee/revenue state variable without access control.",
+          "onChainVerification": {
+            "verified": false,
+            "ethBalance": 0,
+            "callable": false,
+            "revertReason": "execution reverted (unknown custom error) (action=\"call\", data=\"0xf5d267eb\", reason=null, transaction={ \"data\": \"0x472d35b90000000000000000000000000000000000000000000000000000000000000001\", \"from\": \"0"
+          }
+        }
+      ],
+      "status": "FINDINGS"
+    }
+  ]
+}

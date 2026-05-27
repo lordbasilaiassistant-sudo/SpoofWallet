@@ -1,0 +1,28 @@
+{
+  "date": "2026-05-27T18:04:26.832Z",
+  "scanned": 63,
+  "sourced": 54,
+  "confirmed": [
+    {
+      "address": "0x420DD381b31aEf6683db6B902084cB0FFECe40Da",
+      "label": "Aerodrome PoolFactory",
+      "contractName": "PoolFactory",
+      "compiler": "v0.8.19+commit.7dd6d404",
+      "findings": [
+        {
+          "sev": "CRITICAL",
+          "type": "UNPROTECTED_FEE_CHANGE",
+          "fn": "getFee",
+          "params": "address pool, bool _stable",
+          "mods": "public view returns (uint256)",
+          "body": "{\r\n        uint256 fee = customFee[pool];\r\n        return fee == ZERO_FEE_INDICATOR ? 0 : fee != 0 ? fee : _stable ? stableFee : volatileFee;\r\n    }",
+          "verification": {
+            "callable": true,
+            "ethBalance": 0,
+            "verified": true
+          }
+        }
+      ]
+    }
+  ]
+}

@@ -1,0 +1,29 @@
+{
+  "scanDate": "2026-05-27T17:56:29.889Z",
+  "chain": "Base (8453)",
+  "scanner": "live-scan-v3.js",
+  "totalScanned": 44,
+  "totalWithSource": 37,
+  "criticalCount": 1,
+  "highCount": 0,
+  "results": [
+    {
+      "address": "0x33128a8fC17869897dcE68Ed026d694621f6FDfD",
+      "label": "Uniswap V3 Factory",
+      "contractName": "UniswapV3Factory",
+      "compiler": "v0.7.6+commit.7338295f",
+      "ethBalance": 0,
+      "findings": [
+        {
+          "severity": "CRITICAL",
+          "type": "UNPROTECTED_FUND_WITHDRAWAL",
+          "function": "collect",
+          "params": "\n        address recipient,\n        int24 tickLower,\n        int24 tickUpper,\n        uint128 amount0Requested,\n        uint128 amount1Requested\n    ",
+          "modifiers": "external override lock returns (uint128 amount0, uint128 amount1)",
+          "bodyPreview": "{\n        // we don't need to checkTicks here, because invalid positions will never have non-zero tokensOwed{0,1}\n        Position.Info storage position = positions.get(msg.sender, tickLower, tickUpper);\n\n        amount0 = amount0Requested > position.tokensOwed0 ? position.tokensOwed0 : amount0Requested;\n        amount1 = amount1Requested > position.tokensOwed1 ? position.tokensOwed1 : amount1Requested;\n\n        if (amount0 > 0) {\n            position.tokensOwed0 -= amount0;\n            Transfer",
+          "detail": "collect() can withdraw funds to arbitrary address without access control."
+        }
+      ]
+    }
+  ]
+}
