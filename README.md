@@ -1,73 +1,104 @@
-# Spoof Wallet
+# Spoof Wallet — Adversarial AI Security Lab
 
-Chrome extension + test website for simulating wallet identity during transactions. Connect any wallet, then choose a different wallet address (one that actually performed a specific on-chain transaction) to present as your identity to the test page.
+Live adversarial AI research: attacker agents vs defender agents competing on real smart contracts deployed on Base mainnet. A documenter agent tracks every episode. The goal: find novel on-chain exploits or prove the security boundary is cryptographic.
 
-**Educational and testing purposes only.** This tool exists to help developers and security researchers understand how dApps verify wallet identity and where those checks can fail.
+**Live Dashboard**: [lordbasilaiassistant-sudo.github.io/SpoofWallet](https://lordbasilaiassistant-sudo.github.io/SpoofWallet/)
 
-## How It Works
+## What This Is
 
-1. **Install the Chrome extension** from this repo
-2. **Visit the test website** (hosted on GitHub Pages)
-3. **Connect your real wallet** (MetaMask, etc.)
-4. **Pick a target wallet** — enter any address that executed a real on-chain transaction
-5. **The extension intercepts** `window.ethereum` calls and presents the spoofed address to the test page
-6. **The test page shows** what the dApp "sees" vs. your actual connected wallet, demonstrating the gap
+An autonomous AI security lab where:
+- **Attacker agents** try to break smart contract access controls via spoofing, reentrancy, storage corruption, cross-facet exploits, and more
+- **Defender agents** audit contracts, find vulnerabilities, and recommend hardening
+- **Documenter agents** track every attack/defense round as structured episodes
+- **Real contracts on Base mainnet** with real tokens at stake (SPOOF bounty pool)
+- **Public scoreboard** showing findings, affected production contracts, and round-by-round results
+
+## Deployed Contracts (Base Mainnet)
+
+| Contract | Address | Purpose |
+|----------|---------|---------|
+| Diamond Proxy | `0x0D5d767Dfad78a81237bCa60d986d68bffE9B174` | EIP-2535 proxy with delegatecall routing |
+| DiamondCutFacet | `0x2523cec75f2eE829f65A3eDAE49E12976f414c07` | Upgrade mechanism, ownership |
+| ChallengeFacet | `0x7c6634E064F2b7148b0896EC93dBBe9b7Ee824CE` | Fee recipient, message, spoof flag, operators |
+| ERC20Facet | `0xA9ff28e46e2e7CB45369152784413934e1E527f3` | SPOOF token (1B supply) |
+| BountyFacet | `0x89D55CB0d9b62028f37E6bd0294ce263ee4e73e6` | Exploit submission + reward system |
+| FeeVaultFacet | `0x898e2472552421f461c7E878aEEAc2B93B4Cecb6` | Clanker-style fee distribution |
+| SpoofChallenge | `0x2c7985Ff87A7FC85f56030226AeA589F3F86BA6b` | Simple onlyOwner test contract |
+
+## Findings Summary
+
+| Round | Attacker | Defender | Total | Critical |
+|-------|----------|----------|-------|----------|
+| 1 | 18 vectors tested, 0 exploits, 3 LOW | 13 findings (1C, 2H, 5M) | 16 unique | 1 |
+| 2 | In progress | 16 findings (3C, 3H, 5M) | 32+ | 4 |
+
+### Critical Discoveries
+
+1. **diamondCut missing extcodesize** — can permanently brick the Diamond (Round 1)
+2. **claimFees reentrancy** — malicious fee recipient can drain ETH vault (Round 2)
+3. **Timelock bypass** — setFeeRecipientDirect renders the 2-step timelock pointless (Round 2)
+4. **Dual ETH accounting** — treasuryBalance and accumulatedETH both claim same balance, creating insolvency (Round 2)
+
+### Affected Production Contracts
+
+These findings apply to any contract using the same patterns:
+- Custom Diamond implementations without extcodesize check
+- Clanker-style fee distribution with direct change + timelock options
+- Any Diamond with uncapped operator withdrawal authority
+- Single-step ownership transfers (OpenZeppelin Ownable, not Ownable2Step)
+
+## Research Papers
+
+| # | Title | Author |
+|---|-------|--------|
+| 00 | Core Hypothesis | Ada |
+| 01 | Ethereum Transaction Signing | Ada |
+| 02 | Attack Surface Analysis | Ada |
+| 03 | Diamond Attack Vectors | Vex (Red Team) |
+| 04 | Diamond Defense Audit | Ren (Blue Team) |
+| 05 | Adversarial AI Framework | Ada |
+| 06 | Diamond Proxy Security | Ada |
+| 07 | Round 2 Attack Report | Vex (in progress) |
+| 08 | Round 2 Defense Audit | Ren |
+
+## Token Economics
+
+- **SPOOF Token**: 1B total supply, ERC-20 inside Diamond via delegatecall
+- **Bounty Pool**: 1M SPOOF (0.1% of supply) locked for exploit rewards
+- **Max per exploit**: 100K SPOOF
+- **Fee Vault**: 10K SPOOF deposited as simulated trading fees, 80% claimable by fee recipient
 
 ## Architecture
 
 ```
-chrome-extension/       # Manifest V3 Chrome extension
-  ├── manifest.json     # Extension config
-  ├── content.js        # Injects spoofed ethereum provider
-  ├── background.js     # Service worker for extension state
-  └── popup/            # Extension popup UI (select target wallet)
-
-website/                # GitHub Pages test site
-  ├── index.html        # Connect wallet + display identity page
-  ├── app.js            # Web3 integration, shows real vs spoofed
-  └── style.css
+Diamond Proxy (0x0D5d...B174)
+  |
+  |-- fallback() --> delegatecall to facet by selector
+  |-- receive()  --> treasury ETH accounting
+  |
+  +-- DiamondCutFacet: diamondCut, transferOwnership, owner
+  +-- ChallengeFacet: setFeeRecipient, setMessage, claimSpoof, operators, treasury
+  +-- ERC20Facet: full ERC-20 (name, symbol, transfer, approve, etc.)
+  +-- BountyFacet: submitExploit, approveBounty, bounty pool management
+  +-- FeeVaultFacet: depositFees, claimFees, fee recipient timelock + direct change
 ```
 
-## Test Website
+## How the Adversarial Lab Works
 
-The GitHub Pages site at `https://lordbasilaiassistant-sudo.github.io/SpoofWallet/` serves as the **only** test target. The extension is configured to work exclusively with this page. It:
+1. Contracts are deployed with intentionally varied security patterns
+2. Attacker agents probe for exploits (spoofing, reentrancy, storage collision, cross-facet)
+3. Defender agents audit and find vulnerabilities
+4. Documenter tracks rounds as structured episodes
+5. Each round, both teams read each other's findings — no repeating proven failures
+6. Dashboard updates with new findings, severity ratings, and affected production contracts
 
-- Prompts wallet connection via standard EIP-1193 provider
-- Displays the address the dApp receives (spoofed or real)
-- Lets you pick a wallet that performed a specific transaction to impersonate
-- Shows side-by-side comparison: what the dApp sees vs. what's actually signing
+## Educational Purpose
 
-## Setup
-
-### Extension (local dev)
-```
-1. Clone this repo
-2. Open chrome://extensions
-3. Enable "Developer mode"
-4. Click "Load unpacked" → select the chrome-extension/ folder
-```
-
-### Website (GitHub Pages)
-```
-Deployed automatically from the website/ directory on push to main.
-```
-
-## What This Demonstrates
-
-- **Provider injection is trust-based.** dApps trust `window.ethereum` to return the real signer address. A content script can override this trivially.
-- **Address != authentication.** Displaying a wallet address is not proof of ownership. Only a valid signature from the private key proves control.
-- **Signature verification matters.** dApps that verify signatures server-side (Sign-In with Ethereum / EIP-4361) are immune to this spoof. Those that only check `eth_accounts` are not.
-
-## Limitations
-
-- Cannot sign transactions as the spoofed wallet (no private key access)
-- Cannot pass signature challenges (EIP-4361 / SIWE)
-- Only works on the included test website — not a general-purpose attack tool
-- Read-only impersonation of the address, nothing more
-
-## Disclaimer
-
-This project is for **educational and security research purposes only**. It demonstrates a known limitation in how dApps handle wallet identity. Do not use this to deceive, defraud, or impersonate others on production applications. The authors are not responsible for misuse.
+This project demonstrates:
+- Why `msg.sender` cannot be spoofed (ECDSA signature recovery)
+- How Diamond proxy patterns create real attack surface (delegatecall, storage, facets)
+- Cross-facet vulnerabilities that single-contract audits miss
+- How adversarial self-play finds bugs that individual auditors don't
 
 ## License
 

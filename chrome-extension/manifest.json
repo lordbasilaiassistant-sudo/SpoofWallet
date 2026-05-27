@@ -1,0 +1,22 @@
+{
+  "manifest_version": 3,
+  "name": "Spoof Wallet (Educational)",
+  "version": "1.0.0",
+  "description": "Educational tool — intercepts window.ethereum to spoof wallet address. For testing dApp security only.",
+  "permissions": ["storage", "activeTab", "scripting"],
+  "action": {
+    "default_popup": "popup/popup.html",
+    "default_title": "Spoof Wallet"
+  },
+  "content_scripts": [
+    {
+      "matches": ["<all_urls>"],
+      "js": ["injector.js"],
+      "run_at": "document_start",
+      "world": "MAIN"
+    }
+  ],
+  "background": {
+    "service_worker": "background.js"
+  }
+}

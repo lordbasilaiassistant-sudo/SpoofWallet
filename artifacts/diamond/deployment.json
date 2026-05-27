@@ -1,0 +1,51 @@
+{
+  "diamond": "0x0D5d767Dfad78a81237bCa60d986d68bffE9B174",
+  "diamondCutFacet": "0x2523cec75f2eE829f65A3eDAE49E12976f414c07",
+  "challengeFacet": "0x7c6634E064F2b7148b0896EC93dBBe9b7Ee824CE",
+  "deployer": "0x7a3E312Ec6e20a9F62fE2405938EB9060312E334",
+  "owner": "0x7a3E312Ec6e20a9F62fE2405938EB9060312E334",
+  "chainId": 8453,
+  "network": "base-mainnet",
+  "cutSelectors": [
+    "0x204dbd34",
+    "0x8da5cb5b",
+    "0xf2fde38b"
+  ],
+  "chalSelectors": [
+    "0x29b35ab6",
+    "0x448b0324",
+    "0xb7db3e75",
+    "0x1865c57d",
+    "0x6d70f7ae",
+    "0xe74b981b",
+    "0x368b8772",
+    "0x0d86419a"
+  ],
+  "timestamp": "2026-05-27T17:11:06.644Z",
+  "status": "LIVE",
+  "erc20Facet": "0xA9ff28e46e2e7CB45369152784413934e1E527f3",
+  "bountyFacet": "0x89D55CB0d9b62028f37E6bd0294ce263ee4e73e6",
+  "token": {
+    "name": "Spoof Bounty",
+    "symbol": "SPOOF",
+    "totalSupply": "1000000000.0",
+    "bountyPool": "1000000.0"
+  },
+  "feeVaultFacet": "0x898e2472552421f461c7E878aEEAc2B93B4Cecb6",
+  "feeVaultSelectors": [
+    "0xd294f093",
+    "0xebdac090",
+    "0x36248f1e",
+    "0x7f98aa71",
+    "0xda8eefe0",
+    "0x9284ecc5",
+    "0x4c68b66c",
+    "0x7b84fda5"
+  ],
+  "feeVault": {
+    "feeRate": "250 bps (2.5%)",
+    "lpFeesCut": "8000 bps (80%)",
+    "timelockDuration": "60 seconds",
+    "initialDeposit": "10000 SPOOF"
+  }
+}

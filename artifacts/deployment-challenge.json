@@ -1,0 +1,11 @@
+{
+  "contract": "SpoofChallenge",
+  "address": "0x2c7985Ff87A7FC85f56030226AeA589F3F86BA6b",
+  "txHash": "0x3e3272948e47956aade1c42122fd4f891416827e56a5dbfac56cec935c8e1bef",
+  "owner": "0x7a3E312Ec6e20a9F62fE2405938EB9060312E334",
+  "feeRecipient": "0x7a3E312Ec6e20a9F62fE2405938EB9060312E334",
+  "deployer": "0x7a3E312Ec6e20a9F62fE2405938EB9060312E334",
+  "chainId": 8453,
+  "network": "base-mainnet",
+  "timestamp": "2026-05-27T16:53:31.939Z"
+}

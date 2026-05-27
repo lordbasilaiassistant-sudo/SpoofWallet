@@ -1,0 +1,341 @@
+{
+  "abi": [
+    {
+      "inputs": [],
+      "stateMutability": "nonpayable",
+      "type": "constructor"
+    },
+    {
+      "anonymous": false,
+      "inputs": [
+        {
+          "indexed": true,
+          "internalType": "address",
+          "name": "oldRecip",
+          "type": "address"
+        },
+        {
+          "indexed": true,
+          "internalType": "address",
+          "name": "newRecip",
+          "type": "address"
+        },
+        {
+          "indexed": true,
+          "internalType": "address",
+          "name": "changedBy",
+          "type": "address"
+        }
+      ],
+      "name": "FeeRecipientChanged",
+      "type": "event"
+    },
+    {
+      "anonymous": false,
+      "inputs": [
+        {
+          "indexed": true,
+          "internalType": "address",
+          "name": "caller",
+          "type": "address"
+        },
+        {
+          "indexed": false,
+          "internalType": "string",
+          "name": "action",
+          "type": "string"
+        }
+      ],
+      "name": "OwnerActionReverted",
+      "type": "event"
+    },
+    {
+      "anonymous": false,
+      "inputs": [
+        {
+          "indexed": true,
+          "internalType": "address",
+          "name": "caller",
+          "type": "address"
+        },
+        {
+          "indexed": false,
+          "internalType": "string",
+          "name": "action",
+          "type": "string"
+        }
+      ],
+      "name": "OwnerActionSuccess",
+      "type": "event"
+    },
+    {
+      "anonymous": false,
+      "inputs": [
+        {
+          "indexed": true,
+          "internalType": "address",
+          "name": "oldOwner",
+          "type": "address"
+        },
+        {
+          "indexed": true,
+          "internalType": "address",
+          "name": "newOwner",
+          "type": "address"
+        }
+      ],
+      "name": "OwnershipTransferred",
+      "type": "event"
+    },
+    {
+      "anonymous": false,
+      "inputs": [
+        {
+          "indexed": true,
+          "internalType": "address",
+          "name": "caller",
+          "type": "address"
+        },
+        {
+          "indexed": false,
+          "internalType": "uint256",
+          "name": "count",
+          "type": "uint256"
+        }
+      ],
+      "name": "PublicCalled",
+      "type": "event"
+    },
+    {
+      "anonymous": false,
+      "inputs": [
+        {
+          "indexed": true,
+          "internalType": "address",
+          "name": "claimer",
+          "type": "address"
+        },
+        {
+          "indexed": false,
+          "internalType": "bool",
+          "name": "success",
+          "type": "bool"
+        }
+      ],
+      "name": "SpoofClaimed",
+      "type": "event"
+    },
+    {
+      "anonymous": false,
+      "inputs": [
+        {
+          "indexed": true,
+          "internalType": "address",
+          "name": "claimer",
+          "type": "address"
+        },
+        {
+          "indexed": true,
+          "internalType": "address",
+          "name": "realSender",
+          "type": "address"
+        }
+      ],
+      "name": "SpoofDetected",
+      "type": "event"
+    },
+    {
+      "inputs": [],
+      "name": "callPublic",
+      "outputs": [],
+      "stateMutability": "nonpayable",
+      "type": "function"
+    },
+    {
+      "inputs": [],
+      "name": "checkCallerVsOwner",
+      "outputs": [
+        {
+          "internalType": "address",
+          "name": "caller",
+          "type": "address"
+        },
+        {
+          "internalType": "address",
+          "name": "contractOwner",
+          "type": "address"
+        },
+        {
+          "internalType": "bool",
+          "name": "callerIsOwner",
+          "type": "bool"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [],
+      "name": "claimSpoof",
+      "outputs": [],
+      "stateMutability": "nonpayable",
+      "type": "function"
+    },
+    {
+      "inputs": [],
+      "name": "feeRecipient",
+      "outputs": [
+        {
+          "internalType": "address",
+          "name": "",
+          "type": "address"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [],
+      "name": "getState",
+      "outputs": [
+        {
+          "internalType": "address",
+          "name": "_owner",
+          "type": "address"
+        },
+        {
+          "internalType": "address",
+          "name": "_feeRecipient",
+          "type": "address"
+        },
+        {
+          "internalType": "string",
+          "name": "_message",
+          "type": "string"
+        },
+        {
+          "internalType": "uint256",
+          "name": "_publicCalls",
+          "type": "uint256"
+        },
+        {
+          "internalType": "uint256",
+          "name": "_ownerCalls",
+          "type": "uint256"
+        },
+        {
+          "internalType": "bool",
+          "name": "_spoofSucceeded",
+          "type": "bool"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [],
+      "name": "message",
+      "outputs": [
+        {
+          "internalType": "string",
+          "name": "",
+          "type": "string"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [],
+      "name": "owner",
+      "outputs": [
+        {
+          "internalType": "address",
+          "name": "",
+          "type": "address"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [],
+      "name": "ownerCallCount",
+      "outputs": [
+        {
+          "internalType": "uint256",
+          "name": "",
+          "type": "uint256"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [],
+      "name": "publicCallCount",
+      "outputs": [
+        {
+          "internalType": "uint256",
+          "name": "",
+          "type": "uint256"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "address",
+          "name": "newRecipient",
+          "type": "address"
+        }
+      ],
+      "name": "setFeeRecipient",
+      "outputs": [],
+      "stateMutability": "nonpayable",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "string",
+          "name": "newMessage",
+          "type": "string"
+        }
+      ],
+      "name": "setMessage",
+      "outputs": [],
+      "stateMutability": "nonpayable",
+      "type": "function"
+    },
+    {
+      "inputs": [],
+      "name": "spoofSucceeded",
+      "outputs": [
+        {
+          "internalType": "bool",
+          "name": "",
+          "type": "bool"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "address",
+          "name": "newOwner",
+          "type": "address"
+        }
+      ],
+      "name": "transferOwnership",
+      "outputs": [],
+      "stateMutability": "nonpayable",
+      "type": "function"
+    }
+  ],
+  "bytecode": "0x608060405234801561000f575f5ffd5b505f8054336001600160a01b0319918216811790925560018054909116909117905560408051606081019091526023808252610b8c602083013960029061005690826100ff565b506101bd565b634e487b7160e01b5f52604160045260245ffd5b600181811c9082168061008457607f821691505b6020821081036100a257634e487b7160e01b5f52602260045260245ffd5b50919050565b601f8211156100fa57828211156100fa57805f5260205f20601f840160051c60208510156100d357505f5b90810190601f840160051c035f5b818110156100f6575f838201556001016100e1565b5050505b505050565b81516001600160401b038111156101185761011861005c565b61012c816101268454610070565b846100a8565b6020601f82116001811461015e575f83156101475750848201515b5f19600385901b1c1916600184901b1784556101b6565b5f84815260208120601f198516915b8281101561018d578785015182556020948501946001909201910161016d565b50848210156101aa57868401515f19600387901b60f8161c191681555b505060018360011b0184555b5050505050565b6109c2806101ca5f395ff3fe608060405234801561000f575f5ffd5b50600436106100cb575f3560e01c80639b3dc6d111610088578063c77391fe11610063578063c77391fe1461019f578063e21f37ce146101bc578063e74b981b146101d1578063f2fde38b146101e4575f5ffd5b80639b3dc6d114610163578063a3a0f4091461016c578063b7db3e7514610197575f5ffd5b80631865c57d146100cf578063368b8772146100f2578063448b032414610107578063469048401461010f5780635d00a7e11461013a5780638da5cb5b14610151575b5f5ffd5b6100d76101f7565b6040516100e9969594939291906106ef565b60405180910390f35b61010561010036600461073a565b6102cd565b005b610105610384565b600154610122906001600160a01b031681565b6040516001600160a01b0390911681526020016100e9565b61014360035481565b6040519081526020016100e9565b5f54610122906001600160a01b031681565b61014360045481565b5f5460408051338082526001600160a01b0390931660208201819052909214908201526060016100e9565b6101056103d3565b6005546101ac9060ff1681565b60405190151581526020016100e9565b6101c461043e565b6040516100e991906107a8565b6101056101df3660046107c1565b6104ca565b6101056101f23660046107c1565b610604565b5f80546001546003546004546005546002805487966060968896879687966001600160a01b0394851696939094169492939192909160ff1690849061023b906107e7565b80601f0160208091040260200160405190810160405280929190818152602001828054610267906107e7565b80156102b25780601f10610289576101008083540402835291602001916102b2565b820191905f5260205f20905b81548152906001019060200180831161029557829003601f168201915b50505050509350955095509550955095509550909192939495565b5f546001600160a01b031633146102ff5760405162461bcd60e51b81526004016102f69061081f565b60405180910390fd5b60048054905f61030e83610842565b90915550600290506103218284836108d1565b50336001600160a01b03167fa6345eb76c042502b1d9716e3a8d7eb9383e359dea9f935b0728aa74f37f1137604051610378906020808252600a90820152697365744d65737361676560b01b604082015260600190565b60405180910390a25050565b60038054905f61039383610842565b909155505060035460405190815233907f857327607f2b4fa623a9af504f25fa1cf17f7d7d8726ce114674b9bd73327b7c906020015b60405180910390a2565b5f546001600160a01b031633146103fc5760405162461bcd60e51b81526004016102f69061081f565b6005805460ff1916600190811790915560405190815233907f71ca7365ed87eae39e79a95a19faf3647c9d195d949c8a17c2a123434450d8b0906020016103c9565b6002805461044b906107e7565b80601f0160208091040260200160405190810160405280929190818152602001828054610477906107e7565b80156104c25780601f10610499576101008083540402835291602001916104c2565b820191905f5260205f20905b8154815290600101906020018083116104a557829003601f168201915b505050505081565b5f546001600160a01b031633146104f35760405162461bcd60e51b81526004016102f69061081f565b6001600160a01b0381166105385760405162461bcd60e51b815260206004820152600c60248201526b5a65726f206164647265737360a01b60448201526064016102f6565b600180546001600160a01b038381166001600160a01b0319831617909255600480549290911691905f61056a83610842565b909155505060405133906001600160a01b0384811691908416907ff1dbd322e431f00d83a6dbf85d09896187639f7dd04d0a0baeaf298d7e2c4ec5905f90a4336001600160a01b03167fa6345eb76c042502b1d9716e3a8d7eb9383e359dea9f935b0728aa74f37f1137604051610378906020808252600f908201526e1cd95d119959549958da5c1a595b9d608a1b604082015260600190565b5f546001600160a01b0316331461062d5760405162461bcd60e51b81526004016102f69061081f565b6001600160a01b0381166106725760405162461bcd60e51b815260206004820152600c60248201526b5a65726f206164647265737360a01b60448201526064016102f6565b5f80546001600160a01b038381166001600160a01b0319831681178455604051919092169283917f8be0079c531659141344cd1fd0a4f28419497f9722a3daafe3b4186f6b6457e09190a35050565b5f81518084528060208401602086015e5f602082860101526020601f19601f83011685010191505092915050565b6001600160a01b0387811682528616602082015260c0604082018190525f9061071a908301876106c1565b6060830195909552506080810192909252151560a0909101529392505050565b5f5f6020838503121561074b575f5ffd5b823567ffffffffffffffff811115610761575f5ffd5b8301601f81018513610771575f5ffd5b803567ffffffffffffffff811115610787575f5ffd5b856020828401011115610798575f5ffd5b6020919091019590945092505050565b602081525f6107ba60208301846106c1565b9392505050565b5f602082840312156107d1575f5ffd5b81356001600160a01b03811681146107ba575f5ffd5b600181811c908216806107fb57607f821691505b60208210810361081957634e487b7160e01b5f52602260045260245ffd5b50919050565b6020808252600990820152682737ba1037bbb732b960b91b604082015260600190565b5f6001820161085f57634e487b7160e01b5f52601160045260245ffd5b5060010190565b634e487b7160e01b5f52604160045260245ffd5b601f8211156108cc57828211156108cc57805f5260205f20601f840160051c60208510156108a557505f5b90810190601f840160051c035f5b818110156108c8575f838201556001016108b3565b5050505b505050565b67ffffffffffffffff8311156108e9576108e9610866565b6108fd836108f783546107e7565b8361087a565b5f601f84116001811461092e575f85156109175750838201355b5f19600387901b1c1916600186901b178355610985565b5f83815260208120601f198716915b8281101561095d578685013582556020948501946001909201910161093d565b5086821015610979575f1960f88860031b161c19848701351681555b505060018560011b0183555b505050505056fea2646970667358221220d96b4435773e0ab9e07cc7838a1fdfbed0b35ae9739cc3347ea777849fa7ad3564736f6c634300082300334f6e6c7920746865207265616c206f776e65722063616e206368616e67652074686973"
+}
