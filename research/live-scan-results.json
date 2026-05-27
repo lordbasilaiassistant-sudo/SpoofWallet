@@ -1,0 +1,44 @@
+{
+  "scanDate": "2026-05-27T17:49:46.837Z",
+  "chain": "Base (8453)",
+  "totalScanned": 8,
+  "totalWithSource": 6,
+  "criticalCount": 2,
+  "highCount": 0,
+  "mediumCount": 0,
+  "findings": [
+    {
+      "address": "0x2626664c2603336E57B271c5C0b26F421741e481",
+      "label": "Uniswap Universal Router (Base)",
+      "contractName": "SwapRouter02",
+      "compiler": "v0.7.6+commit.7338295f",
+      "ethBalance": 0,
+      "findings": [
+        {
+          "severity": "CRITICAL",
+          "type": "UNPROTECTED_FUND_WITHDRAWAL",
+          "function": "deposit",
+          "snippet": "function deposit() external payable;\n\n    /// @notice Withdraw wrapped ether to get ether\n    function withdraw(uint256) external;\n}\n\n// SPDX-License-Identifier: GPL-2.0-or-later\npragma solidity >=0.6.0;\n\nimport '@openzeppelin/contracts/token/ERC20/IERC20.sol';\n\nlibrary TransferHelper {\n    /// @notice Transfers tokens from the targeted address to the given destination\n    /// @notice Errors with 'STF' if transfer fails\n    /// @param token The contract address of the token to be transferred\n    /// @param from The originating address from which the tokens will be transferred\n    /// @param to The destination address of the transfer\n    /// @param value The amount to be transferred\n    function safeTransferFrom(\n        address token,\n        address from,\n        address to,\n        uint2",
+          "detail": "Function deposit can withdraw funds without access control. Sends value to caller or specified address."
+        }
+      ]
+    },
+    {
+      "address": "0x420DD381b31aEf6683db6B902084cB0FFECe40Da",
+      "label": "Aerodrome Router",
+      "contractName": "PoolFactory",
+      "compiler": "v0.8.19+commit.7dd6d404",
+      "ethBalance": 0,
+      "findings": [
+        {
+          "severity": "CRITICAL",
+          "type": "UNPROTECTED_FEE_SETTER",
+          "function": "setFee",
+          "header": "function setFee(bool _stable, uint256 _fee) external;\r\n\r\n    /// @notice Set overriding fee for a pool from the default\r\n    /// @dev A custom fee of zero means the default fee will be used.\r\n    function setCustomFee(address _pool, uint256 _fee) external;\r\n\r\n    /// @notice Returns fee for a pool, ",
+          "snippet": "function setFee(bool _stable, uint256 _fee) external;\r\n\r\n    /// @notice Set overriding fee for a pool from the default\r\n    /// @dev A custom fee of zero means the default fee will be used.\r\n    function setCustomFee(address _pool, uint256 _fee) external;\r\n\r\n    /// @notice Returns fee for a pool, as custom fees are possible.\r\n    function getFee(address _pool, bool _stable) external view returns (uint256);\r\n\r\n    /// @notice Create a pool given two tokens and if they're stable/volatile\r\n    //",
+          "detail": "Function setFee changes fee/tax recipient or rate with NO access control modifier or require check on msg.sender."
+        }
+      ]
+    }
+  ]
+}
