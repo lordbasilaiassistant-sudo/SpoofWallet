@@ -1,17 +1,47 @@
 # Spoof Wallet — Adversarial AI Security Lab
 
-Live adversarial AI research: attacker agents vs defender agents competing on real smart contracts deployed on Base mainnet. A documenter agent tracks every episode. The goal: find novel on-chain exploits or prove the security boundary is cryptographic.
+Adversarial AI agents competing on live smart contracts. Attacker agents vs defender agents, with a documenter tracking every round. Deployed on Base mainnet with real tokens at stake.
 
 **Live Dashboard**: [lordbasilaiassistant-sudo.github.io/SpoofWallet](https://lordbasilaiassistant-sudo.github.io/SpoofWallet/)
 
-## What This Is
+## The Novel Contribution
 
-An autonomous AI security lab where:
-- **Attacker agents** try to break smart contract access controls via spoofing, reentrancy, storage corruption, cross-facet exploits, and more
-- **Defender agents** audit contracts, find vulnerabilities, and recommend hardening
-- **Documenter agents** track every attack/defense round as structured episodes
-- **Real contracts on Base mainnet** with real tokens at stake (SPOOF bounty pool)
-- **Public scoreboard** showing findings, affected production contracts, and round-by-round results
+The individual bugs we found are mostly known patterns — the real contribution is the **methodology**:
+
+- **Adversarial self-play** finds cross-facet interaction bugs that checklist-style audits miss
+- **Independent verification** prevents inflated findings — a third agent brutally validates each discovery against production contracts
+- **Structured episodes** generate data that could train security-focused models
+- **On-chain verification** (not just source review) catches bugs that static analysis tools don't
+
+The attacker agent's Round 1 checklist found 3 LOW issues. The defender found 13 including 1 CRITICAL. When forced to read each other's work in Round 2, both teams found cross-facet bugs that neither would have found alone. That's the point.
+
+## Findings (Honestly Verified)
+
+Every finding was independently verified against production contracts. We categorize honestly:
+
+| Finding | Severity | Verdict | Notes |
+|---------|----------|---------|-------|
+| diamondCut missing extcodesize | CRITICAL | **KNOWN** | Reference EIP-2535 includes this check. We omitted it. |
+| claimFees reentrancy | HIGH | **MIXED** | Real bug, known pattern. Percentage-of-remainder amplification is semi-novel. |
+| Critical selector removal unprotected | HIGH | **MIXED** | Nick Mudge reference also lacks this. Under-protected in the Diamond standard. |
+| Single-step ownership transfer | HIGH | **KNOWN** | Standard recommendation. Most DeFi TVL still uses single-step. |
+| Timelock bypass (3 write paths) | — | **OUR_FAULT** | We built the bypass ourselves. No production contract does this intentionally. |
+| Dual ETH accounting | — | **OUR_FAULT** | Amateur architecture — two ledgers on one contract. |
+| TOCTOU race on pending fee recipient | MEDIUM | **OUR_FAULT** | Stale pending change reverts a direct change. Our design flaw. |
+| 20% ETH permanently locked | MEDIUM | **OUR_FAULT** | No withdrawal path for protocol-retained share. |
+| Operator uncapped withdrawal | MEDIUM | **MIXED** | Real pattern — many protocols give operators too much authority. |
+
+**Bottom line**: 2 MIXED findings with partial production relevance, 2 KNOWN issues we should have avoided, 4 self-inflicted design flaws. Zero novel zero-days. The security boundary for `msg.sender` is cryptographic (secp256k1) — confirmed across 18+ attack vectors.
+
+## What Actually Matters: The Core Research Question
+
+**Can browser-level wallet spoofing bypass on-chain access controls?**
+
+**Answer: No.** `msg.sender` is derived from `ecrecover(txHash, v, r, s)` — ECDSA signature recovery. No browser extension, provider injection, or RPC manipulation can alter it. This is a cryptographic guarantee, not a software assumption. Confirmed with:
+- 18 attack vectors tested against live Diamond proxy
+- `eth_call` simulation spoofing (works at UI level, zero state change on-chain)
+- Real transaction attempts from non-owner wallets (all reverted)
+- ERC-2771 meta-transaction analysis (would work IF contract uses `_msgSender()` — ours doesn't)
 
 ## Deployed Contracts (Base Mainnet)
 
@@ -19,54 +49,25 @@ An autonomous AI security lab where:
 |----------|---------|---------|
 | Diamond Proxy | `0x0D5d767Dfad78a81237bCa60d986d68bffE9B174` | EIP-2535 proxy with delegatecall routing |
 | DiamondCutFacet | `0x2523cec75f2eE829f65A3eDAE49E12976f414c07` | Upgrade mechanism, ownership |
-| ChallengeFacet | `0x7c6634E064F2b7148b0896EC93dBBe9b7Ee824CE` | Fee recipient, message, spoof flag, operators |
+| ChallengeFacet | `0x7c6634E064F2b7148b0896EC93dBBe9b7Ee824CE` | Fee recipient, spoof flag, operators, treasury |
 | ERC20Facet | `0xA9ff28e46e2e7CB45369152784413934e1E527f3` | SPOOF token (1B supply) |
 | BountyFacet | `0x89D55CB0d9b62028f37E6bd0294ce263ee4e73e6` | Exploit submission + reward system |
 | FeeVaultFacet | `0x898e2472552421f461c7E878aEEAc2B93B4Cecb6` | Clanker-style fee distribution |
-| SpoofChallenge | `0x2c7985Ff87A7FC85f56030226AeA589F3F86BA6b` | Simple onlyOwner test contract |
-
-## Findings Summary
-
-| Round | Attacker | Defender | Total | Critical |
-|-------|----------|----------|-------|----------|
-| 1 | 18 vectors tested, 0 exploits, 3 LOW | 13 findings (1C, 2H, 5M) | 16 unique | 1 |
-| 2 | In progress | 16 findings (3C, 3H, 5M) | 32+ | 4 |
-
-### Critical Discoveries
-
-1. **diamondCut missing extcodesize** — can permanently brick the Diamond (Round 1)
-2. **claimFees reentrancy** — malicious fee recipient can drain ETH vault (Round 2)
-3. **Timelock bypass** — setFeeRecipientDirect renders the 2-step timelock pointless (Round 2)
-4. **Dual ETH accounting** — treasuryBalance and accumulatedETH both claim same balance, creating insolvency (Round 2)
-
-### Affected Production Contracts
-
-These findings apply to any contract using the same patterns:
-- Custom Diamond implementations without extcodesize check
-- Clanker-style fee distribution with direct change + timelock options
-- Any Diamond with uncapped operator withdrawal authority
-- Single-step ownership transfers (OpenZeppelin Ownable, not Ownable2Step)
 
 ## Research Papers
 
-| # | Title | Author |
-|---|-------|--------|
-| 00 | Core Hypothesis | Ada |
-| 01 | Ethereum Transaction Signing | Ada |
-| 02 | Attack Surface Analysis | Ada |
-| 03 | Diamond Attack Vectors | Vex (Red Team) |
-| 04 | Diamond Defense Audit | Ren (Blue Team) |
-| 05 | Adversarial AI Framework | Ada |
-| 06 | Diamond Proxy Security | Ada |
-| 07 | Round 2 Attack Report | Vex (in progress) |
-| 08 | Round 2 Defense Audit | Ren |
-
-## Token Economics
-
-- **SPOOF Token**: 1B total supply, ERC-20 inside Diamond via delegatecall
-- **Bounty Pool**: 1M SPOOF (0.1% of supply) locked for exploit rewards
-- **Max per exploit**: 100K SPOOF
-- **Fee Vault**: 10K SPOOF deposited as simulated trading fees, 80% claimable by fee recipient
+| # | Title | Author | Key Result |
+|---|-------|--------|------------|
+| 00 | Core Hypothesis | Ada | Falsifiable hypothesis + methodology |
+| 01 | Ethereum Transaction Signing | Ada | Why msg.sender = ecrecover (protocol-level) |
+| 02 | Attack Surface Analysis | Ada | 9 vectors enumerated |
+| 03 | Diamond Attack Vectors | Vex (Red) | 18 vectors, all blocked |
+| 04 | Diamond Defense Audit | Ren (Blue) | 13 findings, 1 CRITICAL |
+| 05 | Adversarial AI Framework | Ada | Self-play methodology |
+| 06 | Diamond Proxy Security | Ada | EIP-2535 attack surface |
+| 07 | Round 2 Attack Report | Vex (Red) | 9 findings, cross-facet focus |
+| 08 | Round 2 Defense Audit | Ren (Blue) | 16 findings, 3 CRITICAL |
+| 09 | Findings Verification | Ren (Verify) | Honest assessment: 2 MIXED, 2 KNOWN, 4 OUR_FAULT |
 
 ## Architecture
 
@@ -78,27 +79,26 @@ Diamond Proxy (0x0D5d...B174)
   |
   +-- DiamondCutFacet: diamondCut, transferOwnership, owner
   +-- ChallengeFacet: setFeeRecipient, setMessage, claimSpoof, operators, treasury
-  +-- ERC20Facet: full ERC-20 (name, symbol, transfer, approve, etc.)
-  +-- BountyFacet: submitExploit, approveBounty, bounty pool management
-  +-- FeeVaultFacet: depositFees, claimFees, fee recipient timelock + direct change
+  +-- ERC20Facet: full ERC-20 (SPOOF token, 1B supply)
+  +-- BountyFacet: submitExploit, approveBounty (1M SPOOF bounty pool)
+  +-- FeeVaultFacet: depositFees, claimFees, timelocked fee recipient change
 ```
 
-## How the Adversarial Lab Works
+## Adversarial Round History
 
-1. Contracts are deployed with intentionally varied security patterns
-2. Attacker agents probe for exploits (spoofing, reentrancy, storage collision, cross-facet)
-3. Defender agents audit and find vulnerabilities
-4. Documenter tracks rounds as structured episodes
-5. Each round, both teams read each other's findings — no repeating proven failures
-6. Dashboard updates with new findings, severity ratings, and affected production contracts
+**Round 1**: Attacker tested 18 vectors (spoofing, delegatecall, storage collision, selector clashing, CREATE2, reentrancy, ERC-2771). All blocked. Defender found 13 bugs including missing extcodesize and unprotected critical selectors. **Winner: Defender.**
 
-## Educational Purpose
+**Round 2**: Both teams read each other's Round 1 work. Attacker found timelock bypass and TOCTOU race. Defender found claimFees reentrancy and dual ETH accounting. Verification agent confirmed most findings are self-inflicted, not production-grade. **Winner: Defender (but findings are mostly our own weak code).**
 
-This project demonstrates:
-- Why `msg.sender` cannot be spoofed (ECDSA signature recovery)
-- How Diamond proxy patterns create real attack surface (delegatecall, storage, facets)
-- Cross-facet vulnerabilities that single-contract audits miss
-- How adversarial self-play finds bugs that individual auditors don't
+## Honest Assessment
+
+We set out to find novel on-chain exploits. We didn't find any zero-days. What we proved:
+1. `msg.sender` spoofing is cryptographically impossible without the private key
+2. Adversarial self-play DOES find bugs that individual agents miss (cross-facet interactions)
+3. The Diamond proxy standard (EIP-2535) has under-protected areas (selector removal, facet code validation)
+4. Most of our "critical" findings were self-inflicted design flaws, not production vulnerabilities
+
+The methodology is the contribution, not the bugs.
 
 ## License
 
