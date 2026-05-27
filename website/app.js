@@ -8,7 +8,7 @@
   let contractOwner = null;
 
   const RPC_URL = 'https://mainnet.base.org';
-  const DEFAULT_CONTRACT = '0x2c7985Ff87A7FC85f56030226AeA589F3F86BA6b';
+  const DEFAULT_CONTRACT = '0x0D5d767Dfad78a81237bCa60d986d68bffE9B174';
 
   const ABI = [
     'function callPublic() external',
@@ -16,12 +16,12 @@
     'function setFeeRecipient(address newRecipient) external',
     'function claimSpoof() external',
     'function transferOwnership(address newOwner) external',
-    'function checkCallerVsOwner() external view returns (address caller, address contractOwner, bool callerIsOwner)',
-    'function getState() external view returns (address _owner, address _feeRecipient, string _message, uint256 _publicCalls, uint256 _ownerCalls, bool _spoofSucceeded)',
+    'function approveOperator(address operator, bool approved) external',
+    'function withdrawTreasury(address to, uint256 amount) external',
+    'function diamondCut(address _facetAddress, bytes4[] calldata _selectors, uint8 _action) external',
+    'function getState() external view returns (address _owner, address _feeRecipient, string _message, uint256 _publicCalls, uint256 _ownerCalls, bool _spoofSucceeded, uint256 _treasuryBalance)',
     'function owner() external view returns (address)',
-    'function feeRecipient() external view returns (address)',
-    'function message() external view returns (string)',
-    'function spoofSucceeded() external view returns (bool)',
+    'function isOperator(address addr) external view returns (bool)',
   ];
 
   function getContractAddr() {
@@ -109,7 +109,7 @@
     try {
       const rpc = new ethers.JsonRpcProvider(RPC_URL);
       const contract = new ethers.Contract(getContractAddr(), ABI, rpc);
-      const [_owner, _feeRecip, _msg, _pub, _own, _spoof] = await contract.getState();
+      const [_owner, _feeRecip, _msg, _pub, _own, _spoof, _treasury] = await contract.getState();
       contractOwner = _owner;
 
       $('#contract-owner').textContent = _owner;
