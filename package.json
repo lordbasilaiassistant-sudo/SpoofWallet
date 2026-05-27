@@ -1,0 +1,12 @@
+{
+  "name": "spoof-wallet-test",
+  "private": true,
+  "scripts": {
+    "compile": "node scripts/compile.js",
+    "deploy": "node scripts/deploy.js"
+  },
+  "dependencies": {
+    "ethers": "^6.13.4",
+    "solc": "^0.8.28"
+  }
+}
