@@ -1,0 +1,23 @@
+{
+  "wallet": "0x3B734682625aCCB800c4e18cF8a10380505b945e",
+  "tokens": [
+    {"symbol": "OCEAN", "name": "#SaveTheOcean", "address": "0xAf3AfFd29256aE9C6794CF35fddBaB92631f04A8", "pair": "USDC"},
+    {"symbol": "REMEMBER", "name": "#MemorialDay2026", "address": "0x099FAD1f591ed00dB74042AA6226830d928e03C0", "pair": "USDC"},
+    {"symbol": "EID", "name": "Eid Mubarak", "address": "0xE340207FDd4D6067340C81EAE958687dB8583c8A", "pair": "WETH"},
+    {"symbol": "BASEDAI", "name": "Based AI", "address": "0xc73484AFaCe2c2bc58df027864F1736801A7a75B", "pair": "WETH"},
+    {"symbol": "SAFE", "name": "#StopTheScams", "address": "0xeBBAA7fB3f0042D5ee319D5CB4599044D7EeC681", "pair": "USDC"},
+    {"symbol": "PEACE", "name": "World Peace", "address": "0xD7B3c1672f49e050B4b83D09ACBb174E9f95794f", "pair": "WETH"},
+    {"symbol": "CAVS", "name": "Cavs Win", "address": "0xD45FE8A42E66B6e5C9b396D05A687F0BDBB20540", "pair": "WETH"},
+    {"symbol": "TRUMP26", "name": "Trump 2026", "address": "0x59eCC2f83Cc4174F2cb08034E639611303147733", "pair": "WETH"},
+    {"symbol": "WEMBY", "name": "Wemby", "address": "0x1486aa5898c5692a43A85547DD41598159E36fF9", "pair": "WETH"},
+    {"symbol": "JUSTICE", "name": "George Floyd", "address": "0xfbf61BC607c3767bAE78646D7B06b87898426Dd1", "pair": "WETH"},
+    {"symbol": "FREE", "name": "Iran Freedom", "address": "0x588BeD7C1C8aEFeAE600bEEd95f76e96E233d077", "pair": "WETH"},
+    {"symbol": "GUNNER", "name": "Arsenal Champion", "address": "0xa95d1FE26D3886d3fF2E0D7905FEAcD70F9a5098", "pair": "WETH"},
+    {"symbol": "DROP", "name": "Airdrop Season", "address": "0x3482A76eB9302dC01eb8E45Fcb72552a8878fd9F", "pair": "WETH"},
+    {"symbol": "ARMY", "name": "BTS Army", "address": "0x106c60F8368d47a137e244C7409BC1037E6aEeeB", "pair": "WETH"}
+  ],
+  "deployedAt": "2026-05-27",
+  "totalGasSpent": "~0.0006 ETH",
+  "trades": 0,
+  "revenue": "0 ETH"
+}

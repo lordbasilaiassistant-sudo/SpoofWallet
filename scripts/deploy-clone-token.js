@@ -38,11 +38,11 @@ async function main() {
   const deploymentConfig = {
     tokenConfig: {
       tokenAdmin: wallet.address,
-      name: 'SpoofTrap',
-      symbol: 'SPFTRAP',
+      name: 'Sentinel Agent',
+      symbol: 'SNTL',
       salt: newSalt,
-      image: oc.tokenConfig.image || '',
-      metadata: 'Anti-MEV security research token',
+      image: 'https://raw.githubusercontent.com/lordbasilaiassistant-sudo/SpoofWallet/master/website/favicon.ico',
+      metadata: 'Sentinel Agent - autonomous on-chain security monitoring and threat detection for Base ecosystem smart contracts',
       context: oc.tokenConfig.context || '',
       originatingChainId: 8453,
     },
